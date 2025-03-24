@@ -64,13 +64,18 @@ public class InsertRow {
          * to do some of the work (e.g., to fill in the offsets array
          * with the appropriate offsets).
          */
-        this.offsets[0] = (this.columnVals.length + 1) * 2;
+        
+        this.offsets[0] = (this.columnVals.length + 1) * 2; //need to fix... what if the first value is the primary key?
+
         for (int i = 0; i < this.columnVals.length; i++) {
             Column col = this.table.getColumn(i);
+            
             int colLength = col.getLength();
+            //if colVal is VARCHAR (i think)
             if (col.getType() == 3) {
                 colLength = ((String)col.getValue()).length();
             }
+
             if (col.isPrimaryKey()) {
                 this.offsets[i+1] = -2;
                 break;
@@ -79,7 +84,38 @@ public class InsertRow {
         //add null checker!
         }
     }
+
+
+
+    /*maybe (to find the header)
+     * cur_length = 0       // tracks the length of the curr field can set to 0 for null or PrimKey vals
+     * curr_byte = 2 * (num_cols + 1) // where the first value STARTS
+     * 
+     * for (int i = 0 -> num cols) {
+     *      col_val = col.val
+     *      cur_length = col_val.length()
+     *      if col_val.type IS varchar
+     *          cur_length = (string)col_val.length()
+     *      if col_val IS PrimKey
+     *          cur_length = 0
+     *          offsets[i] = -2
+     *      if col_val IS NULL 
+     *          cur_length = 0
+     *          offsets[i] = -1
+     *      
+     *      if cur_length != 0 
+     *          offsets[i + 1] = cur_byte
+     * 
+     *      cur_byte += cur_length
+     * }
+     */
         
+
+
+
+
+
+    
     /**
      * Returns the RowOutput used for the key portion of the marshalled row.
      *
