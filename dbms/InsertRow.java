@@ -87,8 +87,8 @@ public class InsertRow {
 
 
 
-    /*maybe (to find the header)
-     * cur_length = 0       // tracks the length of the curr field can set to 0 for null or PrimKey vals
+    /* (to find the header)
+     * cur_length = 0       // tracks the length of the curr field --- set to 0 for null or PrimKey vals
      * curr_byte = 2 * (num_cols + 1) // where the first value STARTS
      * 
      * for (int i = 0 -> num cols) {
@@ -110,7 +110,9 @@ public class InsertRow {
      * }
      */
         
-
+    /* 
+     * 
+     */
 
 
 
