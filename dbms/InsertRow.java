@@ -65,58 +65,33 @@ public class InsertRow {
          * with the appropriate offsets).
          */
         
-        this.offsets[0] = (this.columnVals.length + 1) * 2; //need to fix... what if the first value is the primary key?
+        int numCols = columnVals.length;
+        int valOffset = (numCols + 1) * 2;
 
-        for (int i = 0; i < this.columnVals.length; i++) {
-            Column col = this.table.getColumn(i);
-            
-            int colLength = col.getLength();
-            //if colVal is VARCHAR (i think)
-            if (col.getType() == 3) {
-                colLength = ((String)col.getValue()).length();
-            }
+        for (int i = 0; i < numCols; i++) {
+            Column col = table.getColumn(i);
+            Object val = columnVals[i];
 
             if (col.isPrimaryKey()) {
-                this.offsets[i+1] = -2;
-                break;
+                offsets[i] = -2;
+                // write keyBuffer using RowOutput
             }
-            this.offsets[i+1] = colLength;
-        //add null checker!
+            elseif
+            else {
+                offsets[i] = valOffset;
+                valOffset += getColSize(col, val);
+            }
         }
+
+
     }
 
-
-
-    /* (to find the header)
-     * cur_length = 0       // tracks the length of the curr field --- set to 0 for null or PrimKey vals
-     * curr_byte = 2 * (num_cols + 1) // where the first value STARTS
-     * 
-     * for (int i = 0 -> num cols) {
-     *      col_val = col.val
-     *      cur_length = col_val.length()
-     *      if col_val.type IS varchar
-     *          cur_length = (string)col_val.length()
-     *      if col_val IS PrimKey
-     *          cur_length = 0
-     *          offsets[i] = -2
-     *      if col_val IS NULL 
-     *          cur_length = 0
-     *          offsets[i] = -1
-     *      
-     *      if cur_length != 0 
-     *          offsets[i + 1] = cur_byte
-     * 
-     *      cur_byte += cur_length
-     * }
-     */
-        
-    /* 
-     * 
-     */
-
-
-
-
+    private int getColSize(Column col, Object val){
+        if (col.getType() == 3) {
+            return ((String) val).length();
+        }
+        return col.getLength();
+    }
     
     /**
      * Returns the RowOutput used for the key portion of the marshalled row.
