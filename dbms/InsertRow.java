@@ -75,9 +75,9 @@ public class InsertRow {
             if (col.isPrimaryKey()) {
                 offsets[i] = -2;
                 valueBuffer.writeShort(-2);
-                writeKey(col, keyBuffer);
+                writeKey(col, val, keyBuffer);
             }
-            else if (col.getValue() == null) {
+            else if (val == null) {
                 offsets[i] = -1;
                 valueBuffer.writeShort(-1);
             }
@@ -88,24 +88,38 @@ public class InsertRow {
             }
         }
 
+        offsets[numCols] = valOffset;
+
         for (int i = 0; i < numCols; i++) {
             Column col = table.getColumn(i);
-            writeKey(col, valueBuffer);
+            Object val = columnVals[i];
+            if ((col.isPrimaryKey()) || (val == null)) {
+                continue;
+            }
+            else {
+                writeKey(col, val, valueBuffer);
         }
+    }
     }
 
     private int getColSize(Column col, Object val){
         if (col.getType() == 3) {
             return ((String) val).length();
         }
+        if (col.getType() == 0) {
+            return 4;
+        }
         return col.getLength();
     }
 
-    private void writeKey(Column col, RowOutput buffer) throws IOException {
+    private void writeKey(Column col, Object val, RowOutput buffer) throws IOException {
         int colType = col.getType();
-        Object val = col.getValue();
+        if (val == null) {
+            return;
+        }
+
         if (colType == 0) {
-            buffer.write(((Integer)val).intValue());
+            buffer.writeInt(((Integer)val).intValue());
         }
         else if (colType == 1) {
             buffer.writeDouble(((Double)val).doubleValue());
