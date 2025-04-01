@@ -65,6 +65,26 @@ public class InsertStatement extends SQLStatement {
              * and to print the appropriate message after it has occurred.
              */
             
+            RowOutput primKey = row.getKeyBuffer();
+            byte[] primBytes = primKey.getBufferBytes();
+            //putNoOverwrite(null, key, data, putType, writeOptions); ----- something about inserting with duplicate keys
+
+            RowOutput valBuf = row.getValueBuffer();
+            byte[] valBytes = valBuf.getBufferBytes();
+
+            DatabaseEntry key = new DatabaseEntry(primBytes);
+            DatabaseEntry val = new DatabaseEntry(valBytes);
+
+            Database db = table.getDB();
+            OperationStatus status = db.putNoOverwrite(null,key,val);
+
+            if (status == OperationStatus.KEYEXIST) {
+                throw new Exception("There is an existing row with the specified primary key");
+            }
+            else {
+                System.out.println("Added 1 row to " + table + ".");
+            }
+
             
         } catch (Exception e) {
             if (DBMS.DEBUG) {

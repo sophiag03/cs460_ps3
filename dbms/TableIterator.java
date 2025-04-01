@@ -213,10 +213,12 @@ public class TableIterator {
                                              + "on a valid tuple");
         }
 
-        /* 
-         * PS 3: replace the following return statement with your 
-         * implementation of the rest of this method.
+        /* FILL IN HERE:
+         * readNext() 
+         * readAtOffset()
          */
+
+         
         return null;
     }
     

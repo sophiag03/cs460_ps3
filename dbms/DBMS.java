@@ -26,7 +26,7 @@ import com.sleepycat.je.*;
 public class DBMS {
     /** Set this to true to print debugging messages, and false to 
       omit them. */
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     
     /** The home directory of the BDB environment. */
     public static final String DB_HOME = "db";
