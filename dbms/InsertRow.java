@@ -89,6 +89,7 @@ public class InsertRow {
         }
 
         offsets[numCols] = valOffset;
+        valueBuffer.writeShort(valOffset);
 
         for (int i = 0; i < numCols; i++) {
             Column col = table.getColumn(i);
@@ -99,6 +100,8 @@ public class InsertRow {
             else {
                 writeKey(col, val, valueBuffer);
         }
+
+
     }
     }
 

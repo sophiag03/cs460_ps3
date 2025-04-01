@@ -65,10 +65,21 @@ public class SelectStatement extends SQLStatement {
         TableIterator iter = null;
         
         try {
-            /* 
-             * PS 3: Add code here to implement the rest of the method
-             * as described in the assignment.
-             */
+            Table table = this.getTable(0);
+            if (table.open() != OperationStatus.SUCCESS) {
+                throw new Exception();
+            }
+            if (this.numColumns() != 0) {
+                throw new Exception("Specifying column names in the SELECT clause is not supported");
+            }
+            if (this.numTables() > 1) {
+                throw new Exception("Specifying multiple table names in the FROM clause is not supported");
+            }
+            iter = new TableIterator(this, table, this.distinctSpecified());
+            iter.printAll(System.out);
+
+            System.out.println("Selected " + iter.numTuples() + " tuples.");
+
         } catch (Exception e) {
             if (DBMS.DEBUG) {
                 e.printStackTrace();

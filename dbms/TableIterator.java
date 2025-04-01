@@ -213,13 +213,51 @@ public class TableIterator {
                                              + "on a valid tuple");
         }
 
-        /* FILL IN HERE:
-         * readNext() 
-         * readAtOffset()
-         */
+        RowInput keyIn = new RowInput(this.key.getData());
+        //System.out.println(keyIn.toString());
+        RowInput valIn = new RowInput(this.value.getData());
+        //System.out.println(valIn.toString());
 
-         
-        return null;
+        int first = valIn.readShortAtOffset(colIndex*2);
+
+        //System.out.println("DEBUG: startOffset for colIndex " + colIndex + " = " + first);
+
+        if (first == -1) {
+            return null;
+        }
+
+        if (first == -2) {
+            if (col.getType() == 0) {
+                return keyIn.readIntAtOffset(0);
+            } else if (col.getType() == 1) {
+                return keyIn.readDoubleAtOffset(0);
+            } else {
+                return keyIn.readBytesAtOffset(0, this.key.getSize());
+            }
+        }
+
+
+        int scd = this.value.getSize();
+
+        for (int i = colIndex + 1; i < table.numColumns(); i++) {
+            int nextshort = valIn.readShortAtOffset(i);
+            if (nextshort > 0) {
+                scd = nextshort;
+                break;
+            }
+        }
+
+        int len = scd - first;
+
+        //System.out.println("DEBUG: Reading " + len + " bytes at offset " + first);
+
+        if (col.getType() == 0) {
+            return valIn.readIntAtOffset(first);
+        } else if (col.getType() == 1) {
+            return valIn.readDoubleAtOffset(first);
+        } else {
+            return valIn.readBytesAtOffset(first, len);
+        }
     }
     
     /**
